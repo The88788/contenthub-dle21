@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ContentHub - Публикации пользователя для DLE 21</title>
+<style>
+  :root {
+    --bg: #0c0d0e;
+    --panel: #141517;
+    --line: #232527;
+    --text: #e8e9ea;
+    --muted: #9aa0a6;
+    --acid: #b8e62e;
+    --acid-dim: #8fb31f;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.65 "Segoe UI", Arial, sans-serif;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+
+  header.hero {
+    padding: 72px 0 48px;
+    border-bottom: 1px solid var(--line);
+    background:
+      radial-gradient(600px 300px at 80% -10%, rgba(184,230,46,.08), transparent 60%),
+      var(--bg);
+  }
+  .badge {
+    display: inline-block;
+    font-size: 12px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--acid);
+    border: 1px solid rgba(184,230,46,.35);
+    padding: 5px 12px;
+    border-radius: 999px;
+    margin-bottom: 20px;
+  }
+  h1 { font-size: 44px; line-height: 1.15; letter-spacing: -.02em; }
+  h1 em { color: var(--acid); font-style: normal; }
+  .lead { color: var(--muted); font-size: 18px; max-width: 640px; margin-top: 16px; }
+  .hero-actions { margin-top: 28px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn {
+    display: inline-block; padding: 12px 22px; border-radius: 10px;
+    text-decoration: none; font-weight: 600; font-size: 15px;
+  }
+  .btn-acid { background: var(--acid); color: #14170a; }
+  .btn-ghost { border: 1px solid var(--line); color: var(--text); }
+
+  section { padding: 56px 0; border-bottom: 1px solid var(--line); }
+  h2 { font-size: 30px; letter-spacing: -.01em; margin-bottom: 22px; }
+  h3 { font-size: 19px; margin: 26px 0 10px; color: var(--acid); font-weight: 600; }
+  p + p { margin-top: 12px; }
+  ul { margin: 12px 0 12px 22px; }
+  li { margin: 6px 0; }
+  a { color: var(--acid); }
+
+  @media (max-width: 700px) { h1 { font-size: 32px; } }
+
+  .steps { counter-reset: step; margin-top: 20px; }
+  .step {
+    counter-increment: step;
+    display: flex; gap: 18px;
+    padding: 18px 0;
+    border-bottom: 1px dashed var(--line);
+  }
+  .step::before {
+    content: counter(step);
+    flex: 0 0 38px; height: 38px;
+    border-radius: 10px;
+    background: rgba(184,230,46,.12);
+    color: var(--acid);
+    font-weight: 700; font-size: 17px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step-body { flex: 1; min-width: 0; }
+  .step-body p { color: var(--muted); margin-top: 4px; }
+  .step-body p code, p code, li code {
+    background: #1c1e20; border: 1px solid var(--line);
+    padding: 2px 7px; border-radius: 6px;
+    font-size: 13.5px; color: #d7f07a;
+  }
+  pre {
+    background: #101112; border: 1px solid var(--line);
+    border-radius: 10px; padding: 16px 18px;
+    overflow-x: auto; margin: 10px 0;
+    font-size: 13.5px; line-height: 1.55;
+  }
+  pre code { color: #cfe08a; font-family: Consolas, "Courier New", monospace; }
+
+  .panel {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 12px; padding: 22px 24px;
+  }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 700px) { .grid2 { grid-template-columns: 1fr; } }
+
+  table.files { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 14.5px; }
+  table.files td, table.files th {
+    border: 1px solid var(--line); padding: 10px 14px; text-align: left; vertical-align: top;
+  }
+  table.files th { color: var(--muted); font-weight: 600; background: #17181a; }
+  table.files td:first-child { font-family: Consolas, monospace; font-size: 13px; color: #d7f07a; white-space: nowrap; }
+
+  footer { padding: 40px 0 64px; color: var(--muted); font-size: 14px; }
+  footer a { color: var(--acid); text-decoration: none; }
+
+  /* Партнерские блоки */
+  .offers { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 700px) { .offers { grid-template-columns: 1fr; } }
+  .offer {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 12px; padding: 24px 26px; position: relative; overflow: hidden;
+  }
+  .offer::before {
+    content: ""; position: absolute; inset: 0 0 auto 0; height: 3px;
+    background: linear-gradient(90deg, var(--acid), transparent 70%);
+  }
+  .offer-tag {
+    display: inline-block; font-size: 11px; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--acid);
+    border: 1px solid rgba(184,230,46,.35); border-radius: 999px;
+    padding: 4px 11px; margin-bottom: 14px;
+  }
+  .offer h3 { margin: 0 0 10px; font-size: 19px; color: var(--text); }
+  .offer p { color: var(--muted); font-size: 14.5px; margin: 0 0 16px; }
+  .offer .btn { margin-top: 0; }
+  .offer-hosting::before {
+    background: linear-gradient(90deg, #57a8ff, transparent 70%);
+  }
+  .offer-hosting .offer-tag { color: #8fc3ff; border-color: rgba(87,168,255,.35); }
+
+  /* Хостинг-блок */
+  .host-block { margin-top: 20px; }
+  .h-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+  .h-card {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 12px; padding: 22px 24px;
+  }
+  .h-card .ico { font-size: 26px; display: block; margin-bottom: 10px; }
+  .h-card h3 { margin: 0 0 8px; font-size: 17px; color: var(--text); }
+  .h-card p { color: var(--muted); font-size: 14.5px; margin: 0; }
+  @media (max-width: 700px) { .h-cards { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <span class="badge">Модуль для DataLife Engine 21</span>
+    <span class="badge">Версия 1.1.0</span>
+    <h1>ContentHub<br><em>Публикации пользователя и тегов</em></h1>
+    <p class="lead">Отдельные страницы публикаций - по пользователю и по тегу - с
+    группировкой по блокам: услуги одним блоком, кейсы другим, файлы третьим. Каждый
+    блок со своими категориями, своим шаблоном и своим лимитом. Плюс страница
+    <code>/tags/</code> со списком всех тегов сайта.</p>
+    <div class="hero-actions">
+      <a class="btn btn-acid" href="#install">Установка</a>
+      <a class="btn btn-ghost" href="https://the88788.com/">Сайт автора</a>
+    </div>
+  </div>
+</header>
+
+<section id="about">
+  <div class="wrap">
+    <h2>Зачем это нужно</h2>
+    <p>Штатная страница <code>/user/{name}/news/</code> выводит публикации пользователя
+    одним общим списком. Кейсы, услуги и файлы оказываются свалены вместе, без
+    группировки и без разметки под каждый тип контента. На сайтах, где разные
+    типы записей живут в разных категориях, это выглядит неприглядно.</p>
+    <p>Ровно та же проблема у штатной страницы тега <code>/tags/{тег}/</code>: все
+    публикации тега идут одним списком в едином шаблоне краткой новости, хотя
+    кейс, строка прайса и карточка файла - принципиально разные сущности.</p>
+    <p>ContentHub заменяет обе страницы на витрину: блок "Услуги" выводится таблицей
+    прайса, "Кейсы" - сеткой карточек, "Файлы" - списком загрузок. Старый URL
+    <code>/user/{name}/news/</code> автоматически перенаправляется (301) на новую
+    страницу. Плюс появляется страница <code>/tags/</code> - облако всех тегов
+    сайта. Блоки без публикаций не выводятся вовсе: ни заголовка, ни ссылки под
+    блоком.</p>
+
+    <h3>Область применения</h3>
+    <ul>
+      <li>Сайты-визитки фрилансеров и студий: публикации автора сгруппированы
+      по смыслу, а не свалкой.</li>
+      <li>SEO-страницы тегов: посетитель по запросу "услуги DLE" сразу видит и
+      кейсы, и прайс, и файлы по теме.</li>
+      <li>Каталоги и базы знаний: записи пользователя по разделам.</li>
+      <li>Порталы с несколькими авторами: страница автора как полноценное портфолио.</li>
+      <li>Любой DLE-сайт с разнотипным контентом в категориях.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="features">
+  <div class="wrap">
+    <h2>Возможности</h2>
+    <div class="grid2">
+      <div class="panel">
+        <h3>Гибкие блоки</h3>
+        <p>Любое количество блоков, у каждого: заголовок, ID категорий, шаблон
+        вывода, поле сортировки, направление, лимит постов, включение/выключение.
+        Всё редактируется в админ-панели.</p>
+      </div>
+      <div class="panel">
+        <h3>Шаблоны как угодно</h3>
+        <p>Каждый блок собирается штатным тегом <code>{custom}</code>, поэтому блок
+        может выглядеть как угодно: сетка карточек, таблица прайса, список файлов.</p>
+      </div>
+      <div class="panel">
+        <h3>SEO-переезд</h3>
+        <p>Старый URL <code>/user/{name}/news/</code> отвечает 301-редиректом на
+        страницу модуля. Позиции в поиске не теряются.</p>
+      </div>
+      <div class="panel">
+        <h3>Страницы тегов</h3>
+        <p>Модуль забирает на себя штатные URL <code>/tags/{тег}/</code>: публикации
+        тега выводятся теми же блоками и шаблонами, что и у пользователя (фильтр
+        <code>tags=</code> штатного <code>{custom}</code>). Адрес <code>/tags/</code>
+        показывает облако всех тегов сайта (шаблон <code>taglist.tpl</code>).</p>
+      </div>
+      <div class="panel">
+        <h3>Пустые блоки не выводятся</h3>
+        <p>Модуль считает посты каждого блока под текущую страницу (с учётом
+        мультикатегорий). Нет публикаций - блок вырезается целиком: без "пустого"
+        заголовка и ссылки под блоком.</p>
+      </div>
+      <div class="panel">
+        <h3>SEO-заголовки из коробки</h3>
+        <p>Страница тега получает заголовок вида <code>Тег: кейсы, услуги и
+        файлы</code> и уникальные title/description - посадочная под
+        коммерческие запросы, а не "публикации с тегом".</p>
+      </div>
+      <div class="panel">
+        <h3>ЧПУ штатным механизмом</h3>
+        <p>Человекопонятные URL работают через правила DLE 21
+        (<code>engine/data/rules.json</code>), без костылей в .htaccess.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="seo">
+  <div class="wrap">
+    <h2>SEO и карта сайта</h2>
+    <p>Страницы тегов - полноценные посадочные: единый ЧПУ-URL, уникальные
+    заголовки, вёрстка с блоками вместо сквозного списка. Генератор карты сайта
+    DLE 21 штатно включает теги (<code>tags_pages.xml</code> в индексе
+    <code>sitemap.xml</code>) - остаётся только повесить автозапуск:</p>
+    <pre><code># планировщик хостинга, раз в сутки
+curl -s https://site.ru/cron.php?cronmode=sitemap</code></pre>
+    <p>Подробная заметка об автогенерации sitemap с тегами - в комплекте и на
+    сайте CMS DLE. Пустых тегов в DLE не бывает: в карту попадают только теги,
+    привязанные к опубликованным постам.</p>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <h2>Установка</h2>
+    <p>Займет 5 минут. Требования: DLE 21.x, PHP 8.0+.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-body">
+          <strong>Загрузите файлы</strong>
+          <p>Скопируйте содержимое папки <code>upload/</code> в корень сайта,
+          сохраняя структуру. Файлы <code>contenthub.tpl</code> и
+          <code>taglist.tpl</code> положите в папку вашего шаблона
+          (<code>templates/ваш-шаблон/</code>).</p>
+          <table class="files">
+            <tr><th>Файл</th><th>Назначение</th></tr>
+            <tr><td>engine/modules/contenthub.php</td><td>страница модуля</td></tr>
+            <tr><td>engine/inc/contenthub.php</td><td>админ-панель модуля</td></tr>
+            <tr><td>engine/data/contenthub.php</td><td>конфигурация</td></tr>
+            <tr><td>templates/.../contenthub.tpl</td><td>шаблон страницы пользователя/тега</td></tr>
+            <tr><td>templates/.../taglist.tpl</td><td>шаблон списка тегов /tags/</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-body">
+          <strong>Подключите модуль в engine.php</strong>
+          <p>В файле <code>engine/engine.php</code> найдите ветку
+          <code>switch ($do)</code> и добавьте перед <code>default:</code>:</p>
+          <pre><code>case "contenthub":
+    include (DLEPlugins::Check(ENGINE_DIR . '/modules/contenthub.php'));
+    break;</code></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-body">
+          <strong>(Опционально, можно пропустить) Пункт в меню админ-панели</strong>
+          <p>Этот пункт можно пропустить целиком — настройки модуля всегда
+          доступны по прямому адресу <code>admin.php?mod=contenthub</code>.
+          Три варианта интеграции, от полного до минимального:</p>
+          <p><strong>Полный:</strong> плитка в разделе "Настройки скрипта" на
+          главной странице настроек (<code>admin.php?mod=options&action=options</code>)
+          и пункт в левом меню админки (раздел "Настройки скрипта", внизу списка).
+          Добавьте в <code>engine/inc/options.php</code> в массив
+          <code>$options['config']</code>:</p>
+          <pre><code>array(
+    'name' => "Настройки Content Hub",
+    'url' => "?mod=contenthub",
+    'descr' => "Блоки публикаций пользователя и страниц тегов: категории, шаблоны вывода, сортировка и лимиты.",
+    'image' => "admin_tagscloud.png",
+    'access' => "admin"
+),</code></pre>
+          <p>и в <code>engine/skins/default.skin.php</code> в массив
+          <code>$options['config']</code> (в самый низ):</p>
+          <pre><code>array(
+    'name' => "Настройки Content Hub",
+    'url' => "?mod=contenthub",
+    'mod' => "contenthub",
+    'access' => "admin"
+),</code></pre>
+          <p><strong>Минимальный:</strong> только пункт в сайдбаре — добавьте
+          второй фрагмент в любой массив <code>$options[...]</code> вашего skin-файла.</p>
+          <p><strong>Без правок движка:</strong> открывайте настройки по прямому
+          адресу <code>admin.php?mod=contenthub</code>.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-body">
+          <strong>Добавьте правило ЧПУ</strong>
+          <p>В DLE 21 маршрутизацию выполняет встроенный роутер (FastRoute) по
+          правилам из <code>engine/data/rules.json</code>. Правило обязательно:
+          без него страница модуля отдаст 404. Правки в .htaccess для
+          маршрутизации не помогут.</p>
+          <p>Откройте в админ-панели раздел <strong>"Управление ссылками ЧПУ"</strong>
+          (<code>admin.php?mod=friendlyurl</code>), нажмите
+          <strong>"Добавить новое правило"</strong> и заполните три поля:</p>
+          <pre><code>Ключ:             contenthub
+Ссылка ЧПУ:       /contenthub/user/{user}/
+Реальная ссылка:  /index.php?do=contenthub&user={user}</code></pre>
+          <p>При сохранении через админ-панель кэш роутов сбрасывается
+          автоматически. Если редактируете <code>rules.json</code> вручную,
+          добавьте в начало массива и затем удалите файл
+          <code>engine/cache/system/route.rules.php</code>:</p>
+          <pre><code>"contenthub.user": ["/user/{user}/content/", "/index.php?do=contenthub&user={user}", "/user/{user}/content[/]"]</code></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-body">
+          <strong>Подключите страницы тегов</strong>
+          <p>Модуль обслуживает штатные URL тегов DLE. В файле
+          <code>engine/data/rules.json</code> замените реальные ссылки у трёх
+          существующих маршрутов (ключи и ЧПУ-ссылки не меняются):</p>
+          <pre><code>"tags.page": ["/tags/{tag}/page/{cstart}/", "/index.php?do=contenthub&tag={tag}&cstart={cstart}", "/tags/{tag}/page/{cstart:\d+}[/]"],
+"tags": ["/tags/{tag}/", "/index.php?do=contenthub&tag={tag}", "/tags/{tag}[/]"],
+"tags.all": ["/tags/", "/index.php?do=contenthub", "/tags[/]"]</code></pre>
+          <p>После правки удалите файл <code>engine/cache/system/route.rules.php</code>
+          (кэш роутов). Пагинация <code>/tags/{тег}/page/N/</code> остаётся на URL,
+          но список выводится блоками с лимитами из настроек модуля.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-body">
+          <strong>(Опционально) Редирект со старой страницы</strong>
+          <p>Чтобы <code>/user/имя/news/</code> перенаправлял на модуль, добавьте
+          в <code>.htaccess</code> перед строкой
+          <code>RewriteCond %{REQUEST_FILENAME} !-f</code>:</p>
+          <pre><code>RewriteRule ^user/([a-zA-Z0-9\_-]+)/news/$ /contenthub/user/$1/ [R=301,L]</code></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-body">
+          <strong>Откройте настройки модуля</strong>
+          <p>В админ-панели перейдите в <strong>"Настройки скрипта" →
+          "Настройки Content Hub"</strong> (либо откройте прямой адрес
+          <code>admin.php?mod=contenthub</code>) и настройте контент-блоки:
+          заголовки, ID категорий, шаблоны, сортировку, лимиты. Доступно только
+          группе администраторов.</p>
+          <p>Готово: страницы открываются по адресам <code>/user/ИМЯ/content/</code>,
+          <code>/tags/</code> и <code>/tags/ТЕГ/</code>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="usage">
+  <div class="wrap">
+    <h2>Настройка блоков</h2>
+    <p>Настройки открываются по адресу <code>admin.php?mod=contenthub</code>
+    (доступно группе администраторов). Для каждого блока задаются:</p>
+    <ul>
+      <li><strong>Заголовок</strong> - выводится над списком постов блока.</li>
+      <li><strong>Категории (ID)</strong> - ID категорий через запятую, например
+      <code>2,9,10</code>.</li>
+      <li><strong>Шаблон поста</strong> - имя tpl-файла из папки вашего шаблона
+      без расширения, например <code>cases</code>, <code>prices</code>.</li>
+      <li><strong>Сортировка и направление</strong> - как у штатного тега
+      <code>{custom}</code>: по дате, рейтингу, просмотрам, комментариям, заголовку.</li>
+      <li><strong>Лимит</strong> - максимум постов в блоке.</li>
+    </ul>
+
+    <h3>Шаблон страницы</h3>
+    <p>Шаблон <code>contenthub.tpl</code> содержит секцию блоков
+    <code>[ch-blocks]...[/ch-blocks]</code> и секцию каждого блока
+    <code>[ch-cases]...[/ch-cases]</code>, <code>[ch-prices]</code>,
+    <code>[ch-files]</code> (имена совпадают с ключами в конфигурации
+    <code>engine/data/contenthub.php</code>). Выключенный в админке блок
+    вырезается вместе с секцией. Внутри секции работают теги:</p>
+    <ul>
+      <li><code>{ch-name}</code> - имя пользователя (подставляется до парсинга
+      <code>{custom}</code>, поэтому <code>{custom author="{ch-name}"}</code>
+      работает штатно).</li>
+      <li><code>{ch-ключ-title}</code> - заголовок блока.</li>
+      <li><code>{ch-ключ-cats}</code>, <code>{ch-ключ-tpl}</code>,
+      <code>{ch-ключ-order}</code>, <code>{ch-ключ-sort}</code>,
+      <code>{ch-ключ-limit}</code> - параметры блока для <code>{custom}</code>.</li>
+      <li><code>{ch-error}</code> - сообщение об ошибке (не найден, нет публикаций).</li>
+    </ul>
+    <p>Для оформления используются классы <code>.uc-block</code>,
+    <code>.uc-block-title</code>, <code>.uc-empty</code> - добавьте их в CSS
+    вашего шаблона (минимальный набор есть в конце инструкции).</p>
+
+    <h3>Минимальный CSS</h3>
+    <pre><code>.uc-block { margin: 0 0 48px; }
+.uc-block-title { font-size: 26px; margin: 0 0 18px; }
+.uc-empty {
+    padding: 24px; border: 1px dashed #444; border-radius: 10px;
+    color: #999;
+}</code></pre>
+  </div>
+</section>
+
+<section id="offers">
+  <div class="wrap">
+    <h2>Помощь и инфраструктура</h2>
+    <div class="offers" style="grid-template-columns: 1fr">
+      <div class="offer">
+        <span class="offer-tag">Услуга</span>
+        <h3>Установлю ContentHub на ваш сайт</h3>
+        <p>Не хотите возиться с файлами и правилами ЧПУ? Установлю и настрою модуль
+        под ваши категории, сверстаю блоки под ваш шаблон. Доработки DLE под ключ:
+        модули, хаки, шаблоны, серверы.</p>
+        <div class="hero-actions">
+          <a class="btn btn-acid" href="https://the88788.com/">the88788.com</a>
+          <a class="btn btn-ghost" href="https://t.me/The88788">Telegram</a>
+        </div>
+      </div>
+    </div>
+    <div class="host-block">
+      <span class="offer-tag">Рекомендуем</span>
+      <h3>Хостинг для сайта на DLE</h3>
+      <p>Недорогой и быстрый VPS для DataLife Engine - проверено на своих
+      проектах: этот сайт-демо и модуль тестировались именно в такой связке.</p>
+      <div class="h-cards">
+        <div class="h-card">
+          <span class="ico">⚡</span>
+          <h3>VPS от $2.4 в месяц</h3>
+          <p>1 vCPU, 1 GB RAM, 10 GB SSD - полноценный KVM-сервер с root-доступом за цену чашки кофе. У большинства провайдеров такие же ресурсы стоят $4-6.</p>
+        </div>
+        <div class="h-card">
+          <span class="ico">🌍</span>
+          <h3>10 локаций, цена одна</h3>
+          <p>Швеция, Нидерланды, Франция, Германия, Польша, Финляндия, Латвия, Эстония, Великобритания, США - тариф не зависит от площадки.</p>
+        </div>
+        <div class="h-card">
+          <span class="ico">🚀</span>
+          <h3>Быстрый старт</h3>
+          <p>Сервер готов меньше чем за минуту. NVMe-диски Intel/Samsung, канал 200 Mbps, безлимитный трафик, любая ОС, масштабирование в пару кликов, uptime 99.8%.</p>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:28px">
+        <a class="btn btn-acid" href="https://hip.hosting/?code=1b890e361ec6ae343e57" target="_blank" rel="noopener">Забрать VPS за $2.4 на hip.hosting →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p><strong>ContentHub</strong> - модуль для DLE 21, версия 1.1.0. Автор:
+    <a href="https://the88788.com/">the88788.com</a> - сайты, серверы, автоматизация.
+    &nbsp;<a href="#top">Наверх ↑</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
