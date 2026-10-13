@@ -435,6 +435,50 @@ curl -s https://site.ru/cron.php?cronmode=sitemap</code></pre>
   </div>
 </section>
 
+<section id="upgrade">
+  <div class="wrap">
+    <h2>Обновление до 1.1.1</h2>
+    <p>Для установленной версии 1.1.0 достаточно обновить два PHP-файла.
+    Настройки блоков, шаблоны сайта и правила ЧПУ сохраняются.</p>
+    <div class="steps">
+      <div class="step"><div class="step-body">
+        <strong>Сохраните резервную копию</strong>
+        <p>Скопируйте текущие файлы модуля и конфигурацию
+        <code>engine/data/contenthub.php</code> перед обновлением.</p>
+      </div></div>
+      <div class="step"><div class="step-body">
+        <strong>Замените файлы модуля и админки</strong>
+        <p>Перенесите из <code>upload/</code> файлы
+        <code>engine/modules/contenthub.php</code> и
+        <code>engine/inc/contenthub.php</code> с сохранением структуры.</p>
+        <p>Не перезаписывайте свою конфигурацию и шаблоны.
+        Изменения базы данных и маршрутов для этого обновления не требуются.</p>
+      </div></div>
+      <div class="step"><div class="step-body">
+        <strong>Очистите кэш и проверьте страницы</strong>
+        <p>Очистите кэш DLE. Откройте страницу автора, отдельного тега и облако
+        <code>/tags/</code>. Если гостевой просмотр отключён, проверьте отказ
+        доступа без авторизации.</p>
+      </div></div>
+    </div>
+    <h3>Что изменилось</h3>
+    <div class="panel">
+      <ul>
+        <li>Запрет гостевого просмотра теперь охватывает все страницы модуля,
+        включая облако тегов, и возвращает HTTP 403.</li>
+        <li>Неизвестный пользователь или тег получает настоящий HTTP 404.
+        При включённом <code>own_404</code> используется существующий
+        <code>404.html</code>.</li>
+        <li>Массивы вместо строковых параметров пользователя и тега отклоняются
+        без предупреждений PHP.</li>
+        <li>Уточнены адреса установки и редиректа старой страницы публикаций.</li>
+      </ul>
+      <p>Полная история версий — <a href="CHANGELOG.md">CHANGELOG.md</a>.
+      Подборки по-прежнему выводятся с лимитами, без пагинации.</p>
+    </div>
+  </div>
+</section>
+
 <section id="offers">
   <div class="wrap">
     <h2>Помощь и инфраструктура</h2>
@@ -488,5 +532,5 @@ curl -s https://site.ru/cron.php?cronmode=sitemap</code></pre>
   </div>
 </footer>
 
-<section id="upgrade"><h2>Обновление 1.1.0 → 1.1.1</h2><p>Сохраните резервную копию. Замените engine/modules/contenthub.php и engine/inc/contenthub.php. Сохраните свою конфигурацию engine/data/contenthub.php и шаблоны. Очистите кэш DLE. БД и маршруты менять не требуется.</p><p>Запрет гостям теперь охватывает облако тегов (403); неизвестный пользователь или тег получает404. Массивы параметров отклоняются. Подробная история — CHANGELOG.md.</p></section></body>
+</body>
 </html>
