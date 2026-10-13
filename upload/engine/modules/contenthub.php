@@ -5,6 +5,7 @@
  Страница всех публикаций пользователя, сгруппированных
  по блокам (кейсы, услуги, файлы и т.д.).
 
+ v1.1.1: единая проверка allow_guest, отклонение массивов параметров.
  v1.1.0: добавлены страницы тегов:
    /tags/        - облако всех тегов сайта (taglist.tpl)
    /tags/{тег}/  - публикации с тегом, сгруппированные по тем
@@ -24,6 +25,13 @@ if (!is_array($ch_config)) $ch_config = [];
 if (!isset($ch_config['allow_guest'])) $ch_config['allow_guest'] = true;
 if (!isset($ch_config['blocks']) || !is_array($ch_config['blocks'])) $ch_config['blocks'] = [];
 
+foreach (['user', 'tag'] as $ch_parameter) {
+	if (isset($_REQUEST[$ch_parameter]) && !is_string($_REQUEST[$ch_parameter])) {
+		http_response_code(400);
+		echo 'Некорректный запрос.';
+		return;
+	}
+}
 $ch_name = isset($_REQUEST['user']) ? trim((string)$_REQUEST['user']) : '';
 $ch_tag  = isset($_REQUEST['tag']) ? rawurldecode((string)$_REQUEST['tag']) : '';
 $ch_tag  = htmlspecialchars(strip_tags(stripslashes(trim($ch_tag))), ENT_COMPAT, $config['charset']);
@@ -38,8 +46,15 @@ if ($ch_tag !== '') {
 }
 
 $ch_error = '';
+$ch_notfound = false;
 
-if ($ch_mode === 'user') {
+// Настройка применяется также к облаку тегов, до любых запросов к БД.
+if (!$ch_config['allow_guest'] && !$is_logged) {
+	http_response_code(403);
+	$ch_error = 'Просмотр публикаций доступен только авторизованным пользователям.';
+}
+
+if (!$ch_error && $ch_mode === 'user') {
 
 	// ---------------- Публикации пользователя ----------------
 	if ($ch_name === '' && $is_logged) {
@@ -55,6 +70,7 @@ if ($ch_mode === 'user') {
 
 		if (!isset($ch_row['user_id']) || !$ch_row['user_id']) {
 			$ch_error = 'Пользователь "' . htmlspecialchars($ch_name, ENT_QUOTES, $config['charset']) . '" не найден.';
+			$ch_notfound = true;
 		} elseif (!$ch_row['news_num']) {
 			$ch_error = 'У пользователя "' . htmlspecialchars($ch_row['name'], ENT_QUOTES, $config['charset']) . '" пока нет публикаций на сайте.';
 		} else {
@@ -62,7 +78,7 @@ if ($ch_mode === 'user') {
 		}
 	}
 
-} elseif ($ch_mode === 'tag') {
+} elseif (!$ch_error && $ch_mode === 'tag') {
 
 	// ---------------- Публикации с тегом ----------------
 	if (!$ch_config['allow_guest'] && !$is_logged) {
@@ -72,10 +88,23 @@ if ($ch_mode === 'user') {
 
 		if (!isset($ch_row['tag']) || !$ch_row['news_num']) {
 			$ch_error = 'Публикаций с тегом "' . $ch_tag . '" не найдено.';
+			$ch_notfound = true;
 		} else {
 			// Каноническое написание тега из базы (в URL он в нижнем регистре).
 			$ch_tag = $ch_row['tag'];
 		}
+	}
+}
+
+// Несуществующий пользователь/тег -> настоящий 404, а не soft 404.
+if ($ch_notfound) {
+
+	@header( "HTTP/1.1 404 Not Found" );
+
+	if( $config['own_404'] AND file_exists(ROOT_DIR . '/404.html') ) {
+		@header("Content-type: text/html; charset=utf-8");
+		echo file_get_contents( ROOT_DIR . '/404.html' );
+		die();
 	}
 }
 

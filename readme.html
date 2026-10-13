@@ -152,7 +152,7 @@
 <header class="hero" id="top">
   <div class="wrap">
     <span class="badge">Модуль для DataLife Engine 21</span>
-    <span class="badge">Версия 1.1.0</span>
+    <span class="badge">Версия 1.1.1</span>
     <h1>ContentHub<br><em>Публикации пользователя и тегов</em></h1>
     <p class="lead">Отдельные страницы публикаций - по пользователю и по тегу - с
     группировкой по блокам: услуги одним блоком, кейсы другим, файлы третьим. Каждый
@@ -337,7 +337,7 @@ curl -s https://site.ru/cron.php?cronmode=sitemap</code></pre>
           (<code>admin.php?mod=friendlyurl</code>), нажмите
           <strong>"Добавить новое правило"</strong> и заполните три поля:</p>
           <pre><code>Ключ:             contenthub
-Ссылка ЧПУ:       /contenthub/user/{user}/
+Ссылка ЧПУ:       /user/{user}/content/
 Реальная ссылка:  /index.php?do=contenthub&user={user}</code></pre>
           <p>При сохранении через админ-панель кэш роутов сбрасывается
           автоматически. Если редактируете <code>rules.json</code> вручную,
@@ -368,7 +368,7 @@ curl -s https://site.ru/cron.php?cronmode=sitemap</code></pre>
           <p>Чтобы <code>/user/имя/news/</code> перенаправлял на модуль, добавьте
           в <code>.htaccess</code> перед строкой
           <code>RewriteCond %{REQUEST_FILENAME} !-f</code>:</p>
-          <pre><code>RewriteRule ^user/([a-zA-Z0-9\_-]+)/news/$ /contenthub/user/$1/ [R=301,L]</code></pre>
+          <pre><code>RewriteRule ^user/([a-zA-Z0-9\_-]+)/news/$ /user/$1/content/ [R=301,L]</code></pre>
         </div>
       </div>
 
@@ -482,11 +482,11 @@ curl -s https://site.ru/cron.php?cronmode=sitemap</code></pre>
 
 <footer>
   <div class="wrap">
-    <p><strong>ContentHub</strong> - модуль для DLE 21, версия 1.1.0. Автор:
+    <p><strong>ContentHub</strong> - модуль для DLE 21, версия 1.1.1. Автор:
     <a href="https://the88788.com/">the88788.com</a> - сайты, серверы, автоматизация.
     &nbsp;<a href="#top">Наверх ↑</a></p>
   </div>
 </footer>
 
-</body>
+<section id="upgrade"><h2>Обновление 1.1.0 → 1.1.1</h2><p>Сохраните резервную копию. Замените engine/modules/contenthub.php и engine/inc/contenthub.php. Сохраните свою конфигурацию engine/data/contenthub.php и шаблоны. Очистите кэш DLE. БД и маршруты менять не требуется.</p><p>Запрет гостям теперь охватывает облако тегов (403); неизвестный пользователь или тег получает404. Массивы параметров отклоняются. Подробная история — CHANGELOG.md.</p></section></body>
 </html>
