@@ -5,6 +5,7 @@
  Страница всех публикаций пользователя, сгруппированных
  по блокам (кейсы, услуги, файлы и т.д.).
 
+ v1.1.2: права категорий для блоков и тегов, allow_short, защита старых шаблонов.
  v1.1.1: единая проверка allow_guest, отклонение массивов параметров.
  v1.1.0: добавлены страницы тегов:
    /tags/        - облако всех тегов сайта (taglist.tpl)
@@ -45,6 +46,11 @@ if ($ch_tag !== '') {
 	$ch_mode = 'user';
 }
 
+require_once __DIR__ . '/contenthub.access.php';
+$ch_group = $user_group[$member_id['user_group'] ?? 5] ?? [];
+$ch_visibility = contenthubVisibilityWhere($ch_group, !empty($config['allow_multi_category']));
+$ch_published = "p.approve = 1 AND p.date <= '" . date('Y-m-d H:i:s', $_TIME ?? time()) . "' AND (" . $ch_visibility . ")";
+
 $ch_error = '';
 $ch_notfound = false;
 
@@ -84,7 +90,7 @@ if (!$ch_error && $ch_mode === 'user') {
 	if (!$ch_config['allow_guest'] && !$is_logged) {
 		$ch_error = 'Просмотр публикаций доступен только авторизованным пользователям.';
 	} else {
-		$ch_row = $db->super_query("SELECT t.tag, COUNT(*) AS news_num FROM " . PREFIX . "_tags t INNER JOIN " . PREFIX . "_post p ON (t.news_id = p.id) WHERE t.tag = '" . $db->safesql($ch_tag) . "' AND p.approve = 1 GROUP BY t.tag");
+		$ch_row = $db->super_query("SELECT t.tag, COUNT(*) AS news_num FROM " . PREFIX . "_tags t INNER JOIN " . PREFIX . "_post p ON (t.news_id = p.id) WHERE t.tag = '" . $db->safesql($ch_tag) . "' AND {$ch_published} GROUP BY t.tag");
 
 		if (!isset($ch_row['tag']) || !$ch_row['news_num']) {
 			$ch_error = 'Публикаций с тегом "' . $ch_tag . '" не найдено.';
@@ -112,7 +118,7 @@ if ($ch_mode === 'tags' && !$ch_error) {
 
 	// ---------------- Страница /tags/ - облако тегов ----------------
 	$ch_cloud = [];
-	$db->query("SELECT t.tag, COUNT(*) AS news_num FROM " . PREFIX . "_tags t INNER JOIN " . PREFIX . "_post p ON (t.news_id = p.id) WHERE p.approve = 1 GROUP BY t.tag ORDER BY t.tag");
+	$db->query("SELECT t.tag, COUNT(*) AS news_num FROM " . PREFIX . "_tags t INNER JOIN " . PREFIX . "_post p ON (t.news_id = p.id) WHERE {$ch_published} GROUP BY t.tag ORDER BY t.tag");
 	while ($ch_row = $db->get_row()) {
 		$url_tag = trim($ch_row['tag']);
 		$url_tag = str_replace(array("&#039;", "&quot;", "&amp;", "&amp;frasl;"), array("'", '"', "&", "&frasl;"), $url_tag);
@@ -161,7 +167,7 @@ if ($ch_mode === 'tags' && !$ch_error) {
 			}
 
 			// Пустой блок не выводим: ни заголовка, ни ссылки под блоком.
-			$ch_where = "p.approve = 1";
+			$ch_where = $ch_published;
 			if ($ch_mode === 'user') {
 				$ch_where .= " AND p.autor = '" . $db->safesql($ch_name) . "'";
 			} else {
@@ -176,11 +182,22 @@ if ($ch_mode === 'tags' && !$ch_error) {
 					$ch_where .= " AND p.category IN ({$ch_cats})";
 				}
 			}
-			$ch_cnt = $db->super_query("SELECT COUNT(*) AS cnt FROM " . PREFIX . "_post p WHERE {$ch_where}");
-			if (!isset($ch_cnt['cnt']) || !$ch_cnt['cnt']) {
+			$ch_rows = $db->super_query("SELECT p.id FROM " . PREFIX . "_post p WHERE {$ch_where}", true);
+			$ch_ids = array_values(array_unique(array_filter(array_map('intval', array_column($ch_rows, 'id')))));
+			if (!$ch_ids) {
 				$tpl->set_block("'\\[ch-" . $ch_key . "\\](.*?)\\[/ch-" . $ch_key . "\\]'si", '');
 				continue;
 			}
+
+			// Constrain each block custom before compilation, including older site templates.
+			$ch_pattern = '~(\\[ch-' . preg_quote($ch_key, '~') . '\\])(.*?)(\\[/ch-' . preg_quote($ch_key, '~') . '\\])~s';
+			$tpl->copy_template = preg_replace_callback($ch_pattern, static function ($section) use ($ch_ids) {
+				$body = preg_replace_callback('~\{custom\s+((?:[^{}]|\{[^{}]*\})*)\}~i', static function ($custom) use ($ch_ids) {
+					$params = preg_replace('~\\b(?:id|cache)\\s*=\\s*([\"\'])(.*?)\\1~is', '', $custom[1]);
+					return '{custom id="' . implode(',', $ch_ids) . '" cache="no" ' . trim($params) . '}';
+				}, $section[2]);
+				return $section[1] . $body . $section[3];
+			}, $tpl->copy_template);
 
 			$tpl->set('[ch-' . $ch_key . ']', '');
 			$tpl->set('[/ch-' . $ch_key . ']', '');

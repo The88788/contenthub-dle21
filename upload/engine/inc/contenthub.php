@@ -74,7 +74,7 @@ if ($_POST['action'] == "save") {
 // Форма настроек
 // ------------------------------------------------------------------
 // Версия модуля. При каждом исправлении или новой функции увеличивайте номер.
-define( 'CH_VERSION', '1.1.1' );
+define( 'CH_VERSION', '1.1.2' );
 
 echoheader( "<i class=\"fa fa-newspaper-o position-left\"></i><span class=\"text-semibold\">Настройки Content Hub</span> <span class=\"text-muted text-size-small\">v" . CH_VERSION . "</span>", "Публикации пользователя и тегов: блоки страниц /user/ИМЯ/content/ и /tags/ТЕГ/" );
 

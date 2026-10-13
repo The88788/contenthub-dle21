@@ -152,7 +152,7 @@
 <header class="hero" id="top">
   <div class="wrap">
     <span class="badge">Модуль для DataLife Engine 21</span>
-    <span class="badge">Версия 1.1.1</span>
+    <span class="badge">Версия 1.1.2</span>
     <h1>ContentHub<br><em>Публикации пользователя и тегов</em></h1>
     <p class="lead">Отдельные страницы публикаций - по пользователю и по тегу - с
     группировкой по блокам: услуги одним блоком, кейсы другим, файлы третьим. Каждый
@@ -274,6 +274,7 @@ curl -s https://site.ru/cron.php?cronmode=sitemap</code></pre>
           <table class="files">
             <tr><th>Файл</th><th>Назначение</th></tr>
             <tr><td>engine/modules/contenthub.php</td><td>страница модуля</td></tr>
+            <tr><td>engine/modules/contenthub.access.php</td><td>фильтр видимости категорий</td></tr>
             <tr><td>engine/inc/contenthub.php</td><td>админ-панель модуля</td></tr>
             <tr><td>engine/data/contenthub.php</td><td>конфигурация</td></tr>
             <tr><td>templates/.../contenthub.tpl</td><td>шаблон страницы пользователя/тега</td></tr>
@@ -404,6 +405,7 @@ curl -s https://site.ru/cron.php?cronmode=sitemap</code></pre>
       <li><strong>Лимит</strong> - максимум постов в блоке.</li>
     </ul>
 
+    <p>В версии 1.1.2 сохраняйте секции блоков в своём шаблоне: модуль автоматически ограничивает ID в их <code>{custom}</code>. Явные параметры <code>id</code> и <code>cache</code> заменяются; запросы вне секций блоков не защищаются модулем.</p>
     <h3>Шаблон страницы</h3>
     <p>Шаблон <code>contenthub.tpl</code> содержит секцию блоков
     <code>[ch-blocks]...[/ch-blocks]</code> и секцию каждого блока
@@ -437,8 +439,8 @@ curl -s https://site.ru/cron.php?cronmode=sitemap</code></pre>
 
 <section id="upgrade">
   <div class="wrap">
-    <h2>Обновление до 1.1.1</h2>
-    <p>Для установленной версии 1.1.0 достаточно обновить два PHP-файла.
+    <h2>Обновление до 1.1.2</h2>
+    <p>Для установленной версии 1.1.0 или 1.1.1 нужно обновить три PHP-файла.
     Настройки блоков, шаблоны сайта и правила ЧПУ сохраняются.</p>
     <div class="steps">
       <div class="step"><div class="step-body">
@@ -449,7 +451,8 @@ curl -s https://site.ru/cron.php?cronmode=sitemap</code></pre>
       <div class="step"><div class="step-body">
         <strong>Замените файлы модуля и админки</strong>
         <p>Перенесите из <code>upload/</code> файлы
-        <code>engine/modules/contenthub.php</code> и
+        <code>engine/modules/contenthub.php</code>,
+        <code>engine/modules/contenthub.access.php</code> и
         <code>engine/inc/contenthub.php</code> с сохранением структуры.</p>
         <p>Не перезаписывайте свою конфигурацию и шаблоны.
         Изменения базы данных и маршрутов для этого обновления не требуются.</p>
@@ -461,9 +464,11 @@ curl -s https://site.ru/cron.php?cronmode=sitemap</code></pre>
         доступа без авторизации.</p>
       </div></div>
     </div>
-    <h3>Что изменилось</h3>
+    <h3>Что изменилось в 1.1.2</h3>
     <div class="panel">
       <ul>
+        <li>Карточки, пустые блоки и теги учитывают права категорий текущей группы. При включённом <code>allow_short</code> сохраняются разрешённые DLE анонсы.</li>
+        <li>Защита применяется автоматически к старым шаблонам внутри секций блоков. Кэш этих карточек отключён; черновики и будущие публикации не выводятся.</li>
         <li>Запрет гостевого просмотра теперь охватывает все страницы модуля,
         включая облако тегов, и возвращает HTTP 403.</li>
         <li>Неизвестный пользователь или тег получает настоящий HTTP 404.
@@ -526,7 +531,7 @@ curl -s https://site.ru/cron.php?cronmode=sitemap</code></pre>
 
 <footer>
   <div class="wrap">
-    <p><strong>ContentHub</strong> - модуль для DLE 21, версия 1.1.1. Автор:
+    <p><strong>ContentHub</strong> - модуль для DLE 21, версия 1.1.2. Автор:
     <a href="https://the88788.com/">the88788.com</a> - сайты, серверы, автоматизация.
     &nbsp;<a href="#top">Наверх ↑</a></p>
   </div>
